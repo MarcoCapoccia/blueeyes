@@ -1,0 +1,1323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blue-Eyed Islanders Puzzle</title>
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: #f5f5f5;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background-image: url('assets/thumbnail.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+            color: white;
+            padding: 3rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.7) 0%, rgba(118, 75, 162, 0.7) 100%);
+            z-index: 1;
+        }
+        
+        .header h1,
+        .header p {
+            position: relative;
+            z-index: 2;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .header h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .header p {
+            text-align: center;
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        
+        .tabs {
+            background: white;
+            border-bottom: 2px solid #e0e0e0;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 1rem;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .tab-button:hover {
+            background: #f8f8f8;
+            color: #333;
+        }
+        
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .pdf-container {
+            width: 100%;
+            height: 120vh;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: auto;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: #525659;
+        }
+        
+        .pdf-container embed {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            font-size: 18px;
+        }
+        
+        .status-metric {
+            display: inline-block;
+            margin: 10px 20px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+        
+        .status-metric label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .status-metric value {
+            display: block;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .mode-panel {
+            display: none;
+        }
+        
+        .mode-panel.active {
+            display: block;
+        }
+        
+        .progress-container {
+            margin: 20px 0;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: #007bff;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        h3 {
+            color: #555;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            color: #444;
+        }
+        
+        ul, ol {
+            margin-left: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        li {
+            margin-bottom: 0.5rem;
+        }
+        
+        code {
+            background: #f4f4f4;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background: #f4f4f4;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+        
+        .demo-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Blue-Eyed Islanders Puzzle</h1>
+        <p>An Interactive Exploration of Epistemic Logic and Public Announcement Logic</p>
+    </div>
+    
+    <div class="tabs">
+        <button class="tab-button active" data-tab="home">Home</button>
+        <button class="tab-button" data-tab="introduction">Introduction</button>
+        <button class="tab-button" data-tab="model">Model</button>
+        <button class="tab-button" data-tab="strategy">Strategy</button>
+        <button class="tab-button" data-tab="implementation">Implementation</button>
+        <button class="tab-button" data-tab="results">Results</button>
+        <button class="tab-button" data-tab="discussion">Discussion</button>
+        <button class="tab-button" data-tab="demo">Demo</button>
+        <button class="tab-button" data-tab="references">References</button>
+        <button class="tab-button" data-tab="github">GitHub</button>
+    </div>
+    
+    <!-- Home Tab -->
+    <div id="home" class="tab-content active">
+        <div class="container" style="text-align: center; max-width: 800px; margin: 0 auto; position: relative; padding-bottom: 100px;">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1.5rem; color: #333;">Logical Aspects of Multi-Agent Systems</h2>
+            <p style="font-size: 1.5rem; margin-bottom: 0.5rem; color: #555;"><strong>University of Groningen</strong></p>
+            <p style="font-size: 1.2rem; margin-bottom: 0.5rem; color: #777;"><strong>January 2026</strong></p>
+            <p style="font-size: 1.3rem; margin-bottom: 2rem; color: #666;"><strong>Group AND</strong></p>
+            
+            <h3 style="font-size: 1.8rem; margin-top: 2.5rem; margin-bottom: 1.5rem; color: #444;">Group Members</h3>
+            <div style="display: inline-block; text-align: left;">
+                <div style="margin-bottom: 1.5rem;">
+                    <p style="font-size: 1.4rem; margin-bottom: 0.5rem; color: #333;"><strong>Eli Baho</strong></p>
+                    <p style="font-size: 1.1rem; margin-bottom: 0.3rem; color: #555;">Email: <a href="mailto:e.p.baho@student.rug.nl" style="color: #667eea;">e.p.baho@student.rug.nl</a></p>
+                    <p style="font-size: 1.1rem; color: #555;">Student ID: s4807103</p>
+                </div>
+                <div>
+                    <p style="font-size: 1.4rem; margin-bottom: 0.5rem; color: #333;"><strong>Marco Capoccia</strong></p>
+                    <p style="font-size: 1.1rem; margin-bottom: 0.3rem; color: #555;">Email: <a href="mailto:m.capoccia@student.rug.nl" style="color: #667eea;">m.capoccia@student.rug.nl</a></p>
+                    <p style="font-size: 1.1rem; color: #555;">Student ID: s4807189</p>
+                </div>
+            </div>
+            <img src="assets/ruglogo.png" alt="Universiteit Groningen Logo" style="position: absolute; bottom: 20px; right: 20px; max-height: 60px; width: auto;">
+        </div>
+    </div>
+    
+    <!-- Introduction Tab -->
+    <div id="introduction" class="tab-content">
+        <div class="container">
+            <div class="pdf-container">
+                <embed src="docs/Introduction.pdf#zoom=page-fit" type="application/pdf">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Model Tab -->
+    <div id="model" class="tab-content">
+        <div class="container">
+            <div class="pdf-container">
+                <embed src="docs/Model.pdf#zoom=page-fit" type="application/pdf">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Strategy Tab -->
+    <div id="strategy" class="tab-content">
+        <div class="container">
+            <div class="pdf-container">
+                <embed src="docs/Strategy.pdf#zoom=page-fit" type="application/pdf">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Implementation Tab -->
+    <div id="implementation" class="tab-content">
+        <div class="container">
+            <div class="pdf-container">
+                <embed src="docs/Implementation.pdf#zoom=page-fit" type="application/pdf">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Results Tab -->
+    <div id="results" class="tab-content">
+        <div class="container">
+            <div class="pdf-container">
+                <embed src="docs/Results.pdf#zoom=page-fit" type="application/pdf">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Discussion Tab -->
+    <div id="discussion" class="tab-content">
+        <div class="container">
+            <div class="pdf-container">
+                <embed src="docs/Discussion.pdf#zoom=page-fit" type="application/pdf">
+            </div>
+        </div>
+    </div>
+    
+    <!-- Demo Tab -->
+    <div id="demo" class="tab-content">
+        <div class="demo-container">
+            <div id="loading" class="loading">
+                <div id="loading-status">Loading Pyodide... This may take a moment.</div>
+                <div class="progress-container" style="margin-top: 20px;">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="loading-progress" style="width: 0%">0%</div>
+                    </div>
+                </div>
+                <div id="loading-details" style="margin-top: 10px; font-size: 14px; color: #666;"></div>
+            </div>
+            
+            <div id="app" style="display: none;">
+                <div class="mode-selector" style="margin: 20px 0; padding: 10px; background: #f0f0f0; border-radius: 4px;">
+                    <label style="margin-right: 20px; cursor: pointer;">
+                <input type="radio" name="mode" value="simulator" checked>
+                Mode A: Single Matrix Simulator
+            </label>
+                    <label style="cursor: pointer;">
+                <input type="radio" name="mode" value="enumeration">
+                Mode B: Matrix Enumeration
+            </label>
+        </div>
+
+                <div id="mode-a" class="mode-panel active">
+            <h2>Mode A: Single Matrix Simulator</h2>
+            
+                    <div class="controls" style="display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap;">
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-weight: bold;">Number of agents (n):</label>
+                            <input type="number" id="n-input" min="2" max="6" value="3" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-weight: bold;">Max days:</label>
+                            <input type="number" id="max-days" min="1" max="20" value="15" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px; justify-content: flex-end;">
+                            <label style="cursor: pointer;">
+                                <input type="checkbox" id="allow-self-visibility">
+                                Allow self-visibility
+                            </label>
+                </div>
+            </div>
+
+            <div id="matrix-editor"></div>
+
+                    <div class="controls" style="margin: 20px 0;">
+                        <label style="font-weight: bold; display: block; margin-bottom: 10px;">Actual Blue-Eyed Agents:</label>
+                        <div id="blue-agents-select" style="display: flex; gap: 15px; flex-wrap: wrap; min-height: 30px;"></div>
+            </div>
+
+                    <div class="buttons" style="display: flex; gap: 10px; margin: 20px 0;">
+                        <button id="step-btn" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Step</button>
+                        <button id="run-btn" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Run</button>
+                        <button id="reset-btn" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">Reset</button>
+            </div>
+
+            <div id="current-state"></div>
+            <div id="history"></div>
+            <div id="epistemic-states"></div>
+        </div>
+
+                <div id="mode-b" class="mode-panel">
+            <h2>Mode B: Visibility Matrix Enumeration</h2>
+            
+                    <div class="controls" style="display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap;">
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-weight: bold;">Number of agents (n):</label>
+                            <input type="number" id="mode-b-n" min="2" max="5" value="3" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-weight: bold;">Max days:</label>
+                            <input type="number" id="mode-b-max-days" min="1" max="20" value="15" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                </div>
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-weight: bold;">Solvability Definition:</label>
+                            <select id="definition" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option>Definition A: Uniform Solvability</option>
+                        <option>Definition B: Instance Solvability</option>
+                    </select>
+                </div>
+            </div>
+
+                    <div id="blue-set-b" style="display: none; margin: 20px 0;">
+                        <label style="font-weight: bold; display: block; margin-bottom: 10px;">Blue Set for Instance Solvability:</label>
+                        <div id="blue-agents-select-b" style="display: flex; gap: 15px; flex-wrap: wrap;"></div>
+            </div>
+
+            <div id="enumeration-method"></div>
+
+                    <button id="run-enumeration" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin: 20px 0;">Run Enumeration</button>
+                    
+                    <div class="progress-container" id="progress-container" style="display: none; margin: 20px 0;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill" style="width: 0%">0%</div>
+                        </div>
+                        <div id="progress-text"></div>
+                    </div>
+
+            <div id="enumeration-results"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- References Tab -->
+    <div id="references" class="tab-content">
+        <div class="container">
+            <div class="pdf-container">
+                <embed src="docs/References.pdf#zoom=page-fit" type="application/pdf">
+            </div>
+        </div>
+    </div>
+
+    <!-- GitHub Tab -->
+    <div id="github" class="tab-content">
+        <div class="container">
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+    <script>
+        // handle tab navigation clicks
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const tabName = button.dataset.tab;
+                
+                // redirect github tab to external url
+                if (tabName === 'github') {
+                    window.open('https://github.com/MarcoCapoccia/BlueEyes', '_blank');
+                    return;
+                }
+                
+                // update active button state
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                // update active content
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                document.getElementById(tabName).classList.add('active');
+            });
+        });
+        
+        // pyodide runtime and app state
+        let pyodide;
+        let simulator = null;
+        let enumerator = null;
+        let currentVisibility = null;
+        let currentN = 3;
+        let pyodideLoaded = false;
+
+        function updateLoadingStatus(message, progress = null) {
+            const statusEl = document.getElementById('loading-status');
+            const detailsEl = document.getElementById('loading-details');
+            const progressEl = document.getElementById('loading-progress');
+            
+            if (statusEl) statusEl.textContent = message;
+            if (detailsEl) detailsEl.textContent = message;
+            if (progressEl && progress !== null) {
+                progressEl.style.width = `${progress}%`;
+                progressEl.textContent = `${Math.round(progress)}%`;
+            }
+        }
+
+        // load python files into pyodide virtual filesystem
+        async function loadPythonCode() {
+            const pythonFiles = ['python/model.py', 'python/epistemic.py', 'python/pal.py', 'python/simulator.py', 'python/enumerator.py'];
+            const total = pythonFiles.length;
+            
+            // create python directory in virtual filesystem
+            try {
+                pyodide.FS.mkdir('/home/pyodide/python');
+            } catch (e) {
+                console.log('Python directory already exists or error:', e);
+            }
+            
+            // write python files to virtual filesystem
+            for (let i = 0; i < pythonFiles.length; i++) {
+                const file = pythonFiles[i];
+                const progress = (i / total) * 50;
+                updateLoadingStatus(`Loading ${file}... (${i + 1}/${total})`, 20 + progress);
+                
+                try {
+                    const response = await fetch(file);
+                    if (!response.ok) {
+                        throw new Error(`Failed to load ${file}: ${response.status}`);
+                    }
+                    const code = await response.text();
+                    
+                    // write to pyodide virtual filesystem
+                    pyodide.FS.writeFile(`/home/pyodide/${file}`, code);
+                    console.log(`Loaded ${file}`);
+                } catch (error) {
+                    console.error(`Error loading ${file}:`, error);
+                    updateLoadingStatus(`Error loading ${file}: ${error.message}`, null);
+                    throw error;
+                }
+            }
+            
+            // import modules in dependency order
+            updateLoadingStatus('Importing Python modules...', 70);
+            
+            // setup python import path
+            await pyodide.runPythonAsync(`
+import sys
+import importlib.util
+            `);
+            
+            // import modules in dependency order
+            const importOrder = [
+                {name: 'model', file: 'python/model.py'},
+                {name: 'epistemic', file: 'python/epistemic.py'},
+                {name: 'pal', file: 'python/pal.py'},
+                {name: 'simulator', file: 'python/simulator.py'},
+                {name: 'enumerator', file: 'python/enumerator.py'}
+            ];
+            
+            for (let i = 0; i < importOrder.length; i++) {
+                const module = importOrder[i];
+                const progress = 70 + ((i + 1) / importOrder.length) * 20;
+                updateLoadingStatus(`Importing ${module.name}...`, progress);
+                
+                try {
+                    // load module using importlib
+                    await pyodide.runPythonAsync(`
+import importlib.util
+spec = importlib.util.spec_from_file_location("${module.name}", "/home/pyodide/${module.file}")
+${module.name}_mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(${module.name}_mod)
+import sys
+sys.modules["${module.name}"] = ${module.name}_mod
+                    `);
+                    console.log(`Imported ${module.name}`);
+                } catch (error) {
+                    console.error(`Error importing ${module.name}:`, error);
+                    updateLoadingStatus(`Error importing ${module.name}: ${error.message}`, null);
+                    throw error;
+                }
+            }
+        }
+        
+        // initialize pyodide runtime and modules
+        async function main() {
+            if (pyodideLoaded) return;
+            
+            try {
+                updateLoadingStatus('Downloading Pyodide runtime (this may take 1-2 minutes on first load)...', 5);
+                
+                // load pyodide with timeout protection
+                const loadPromise = loadPyodide({
+                    indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/"
+                });
+                
+                const timeoutPromise = new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error('Pyodide loading timed out after 5 minutes. Please check your internet connection and try again.')), 300000);
+                });
+                
+                pyodide = await Promise.race([loadPromise, timeoutPromise]);
+                
+                updateLoadingStatus('Loading NumPy package...', 15);
+                await pyodide.loadPackage("numpy");
+                
+                updateLoadingStatus('Pyodide loaded! Loading Python modules...', 20);
+                await loadPythonCode();
+                
+                updateLoadingStatus('Initializing application...', 100);
+                
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('app').style.display = 'block';
+                
+                setupEventListeners();
+                updateModeA();
+                pyodideLoaded = true;
+            } catch (error) {
+                console.error('Initialization error:', error);
+                const loadingEl = document.getElementById('loading');
+                loadingEl.innerHTML = `
+                    <div style="color: red; padding: 20px;">
+                        <h3>Error Loading Application</h3>
+                        <p><strong>${error.message}</strong></p>
+                        <p>Possible solutions:</p>
+                        <ul style="text-align: left; display: inline-block;">
+                            <li>Check your internet connection (Pyodide needs to download ~20MB)</li>
+                            <li>Try refreshing the page</li>
+                            <li>Check browser console (F12) for more details</li>
+                            <li>Try a different browser</li>
+                        </ul>
+                        <button onclick="location.reload()" style="margin-top: 20px; padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Retry</button>
+                    </div>
+                `;
+            }
+        }
+        
+        // initialize demo tab ui elements
+        function initDemoTab() {
+            const nInput = document.getElementById('n-input');
+            if (nInput) {
+                const n = parseInt(nInput.value) || 3;
+                updateBlueAgentsSelect('blue-agents-select', n);
+                updateMatrixEditor();
+            }
+        }
+        
+        // lazy load pyodide when demo tab clicked
+        document.querySelector('[data-tab="demo"]').addEventListener('click', () => {
+            // Initialize UI immediately
+            setTimeout(initDemoTab, 50);
+            
+            if (!pyodideLoaded && !pyodide) {
+                setTimeout(main, 100);
+            } else if (pyodideLoaded) {
+                // If Pyodide is already loaded, make sure UI is updated
+                setTimeout(() => {
+                    if (document.getElementById('mode-a').classList.contains('active')) {
+                        updateModeA();
+                    }
+                }, 100);
+            }
+        });
+        
+        // initialize demo if active on page load
+        if (document.getElementById('demo').classList.contains('active')) {
+            setTimeout(initDemoTab, 100);
+        }
+
+        function setupEventListeners() {
+            // setup mode selection handlers
+            document.querySelectorAll('input[name="mode"]').forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if (e.target.value === 'simulator') {
+                        document.getElementById('mode-a').classList.add('active');
+                        document.getElementById('mode-b').classList.remove('active');
+                        updateModeA();
+                    } else {
+                        document.getElementById('mode-a').classList.remove('active');
+                        document.getElementById('mode-b').classList.add('active');
+                        updateModeB();
+                    }
+                });
+            });
+
+            // Mode A controls
+            document.getElementById('n-input').addEventListener('change', updateModeA);
+            document.getElementById('max-days').addEventListener('change', () => {
+                // reset simulator when max-days changes
+                simulator = null;
+                // clear status to prompt user to run again
+                const blueAgents = getBlueAgents('blue-agents-select');
+                if (blueAgents && blueAgents.size > 0) {
+                    document.getElementById('current-state').innerHTML = '<p>Click "Run" to start the simulation.</p>';
+                } else {
+                    document.getElementById('current-state').innerHTML = '<p>Please select at least one blue-eyed agent.</p>';
+                }
+                document.getElementById('history').innerHTML = '';
+                document.getElementById('epistemic-states').innerHTML = '';
+            });
+            document.getElementById('allow-self-visibility').addEventListener('change', () => {
+                updateMatrixEditor();
+                // reset simulator when allow-self changes
+                simulator = null;
+                // clear status to prompt user to run again
+                const blueAgents = getBlueAgents('blue-agents-select');
+                if (blueAgents.size > 0) {
+                    document.getElementById('current-state').innerHTML = '<p>Click "Run" to start the simulation.</p>';
+                } else {
+                    document.getElementById('current-state').innerHTML = '<p>Please select at least one blue-eyed agent.</p>';
+                }
+                document.getElementById('history').innerHTML = '';
+                document.getElementById('epistemic-states').innerHTML = '';
+            });
+
+            // Mode A buttons
+            document.getElementById('step-btn').addEventListener('click', handleStep);
+            document.getElementById('run-btn').addEventListener('click', handleRun);
+            document.getElementById('reset-btn').addEventListener('click', handleReset);
+
+            // Mode B controls
+            document.getElementById('mode-b-n').addEventListener('change', updateModeB);
+            document.getElementById('mode-b-max-days').addEventListener('change', updateModeB);
+            document.getElementById('definition').addEventListener('change', updateModeB);
+            document.getElementById('run-enumeration').addEventListener('click', handleEnumeration);
+        }
+
+        function updateModeA() {
+            const nInput = document.getElementById('n-input');
+            if (!nInput) {
+                console.error('n-input not found');
+                return;
+            }
+            const n = parseInt(nInput.value) || 3;
+            currentN = n;
+            
+            // Always create checkboxes first, even if Pyodide isn't loaded
+            updateBlueAgentsSelect('blue-agents-select', n);
+            
+            // update matrix editor if pyodide loaded
+            if (pyodideLoaded) {
+                updateMatrixEditor();
+                simulator = null;
+                const blueAgents = getBlueAgents('blue-agents-select');
+                if (blueAgents.size > 0) {
+                    document.getElementById('current-state').innerHTML = '<p>Click "Run" to start the simulation.</p>';
+                } else {
+                    document.getElementById('current-state').innerHTML = '<p>Please select at least one blue-eyed agent.</p>';
+                }
+                document.getElementById('history').innerHTML = '';
+                document.getElementById('epistemic-states').innerHTML = '';
+            } else {
+                // show placeholder if pyodide not loaded
+                document.getElementById('current-state').innerHTML = '<p>Please select at least one blue-eyed agent.</p>';
+                document.getElementById('history').innerHTML = '';
+                document.getElementById('epistemic-states').innerHTML = '';
+            }
+        }
+
+        function updateModeB() {
+            const n = parseInt(document.getElementById('mode-b-n').value);
+            const definition = document.getElementById('definition').value;
+            const showBlueSet = definition.includes('Instance');
+            document.getElementById('blue-set-b').style.display = showBlueSet ? 'block' : 'none';
+            
+            if (showBlueSet) {
+                updateBlueAgentsSelect('blue-agents-select-b', n);
+            }
+            
+            updateEnumerationMethod(n);
+        }
+
+        function updateEnumerationMethod(n) {
+            const container = document.getElementById('enumeration-method');
+            if (n <= 4) {
+                container.innerHTML = '<p>Using Full Enumeration</p>';
+            } else {
+                container.innerHTML = `
+                    <div class="controls" style="display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap;">
+                        <div style="display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-weight: bold;">Enumeration Method:</label>
+                            <select id="enum-method" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                                <option>Full Enumeration</option>
+                                <option>Random Sampling</option>
+                            </select>
+                        </div>
+                        <div id="num-samples-container" style="display: none; display: flex; flex-direction: column; gap: 5px;">
+                            <label style="font-weight: bold;">Number of samples:</label>
+                            <input type="number" id="num-samples" min="100" max="10000" value="1000" step="100" style="padding: 5px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+                    </div>
+                `;
+                
+                document.getElementById('enum-method').addEventListener('change', (e) => {
+                    document.getElementById('num-samples-container').style.display = 
+                        e.target.value === 'Random Sampling' ? 'flex' : 'none';
+                });
+            }
+        }
+
+        function updateMatrixEditor() {
+            const nInput = document.getElementById('n-input');
+            if (!nInput) return;
+            
+            const n = parseInt(nInput.value) || 3;
+            const allowSelfCheckbox = document.getElementById('allow-self-visibility');
+            const allowSelf = allowSelfCheckbox ? allowSelfCheckbox.checked : false;
+            
+            // get current matrix state from checkboxes or create new one
+            let matrix = Array(n).fill(null).map(() => Array(n).fill(1));
+            
+            // try to read current state from checkboxes if they exist
+            const existingCheckboxes = document.querySelectorAll('#matrix-editor input[type="checkbox"]');
+            if (existingCheckboxes.length === n * n) {
+                existingCheckboxes.forEach(cb => {
+                    const row = parseInt(cb.dataset.row);
+                    const col = parseInt(cb.dataset.col);
+                    if (row < n && col < n) {
+                        matrix[row][col] = cb.checked ? 1 : 0;
+                    }
+                });
+            }
+            
+            // always update diagonal based on allowSelf setting
+            for (let i = 0; i < n; i++) {
+                matrix[i][i] = allowSelf ? 1 : 0;
+            }
+            
+            const container = document.getElementById('matrix-editor');
+            if (!container) {
+                console.error('matrix-editor container not found');
+                return;
+            }
+            
+            let html = '<h3>Visibility Matrix</h3><table class="matrix-table" style="border-collapse: collapse; margin: 20px 0; width: 100%;"><thead><tr><th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold;"></th>';
+            for (let j = 0; j < n; j++) {
+                html += `<th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold; text-align: center;">Agent ${j}</th>`;
+            }
+            html += '</tr></thead><tbody>';
+            
+            for (let i = 0; i < n; i++) {
+                html += `<tr><th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold;">Agent ${i}</th>`;
+                for (let j = 0; j < n; j++) {
+                    const disabled = !allowSelf && i === j;
+                    const checked = matrix[i][j] ? 'checked' : '';
+                    html += `<td style="border: 1px solid #ddd; padding: 8px; text-align: center;"><input type="checkbox" data-row="${i}" data-col="${j}" ${checked} ${disabled ? 'disabled' : ''} style="cursor: pointer; width: 18px; height: 18px;"></td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+            container.innerHTML = html;
+            
+            // add event listeners for matrix checkboxes
+            container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                cb.addEventListener('change', () => {
+                    // reset simulator when matrix changes
+                    simulator = null;
+                    if (pyodideLoaded) {
+                        updateVisibilityMatrix();
+                    }
+                    // clear status to prompt user to run again
+                    const blueAgents = getBlueAgents('blue-agents-select');
+                    if (blueAgents.size > 0) {
+                        document.getElementById('current-state').innerHTML = '<p>Click "Run" to start the simulation.</p>';
+                    } else {
+                        document.getElementById('current-state').innerHTML = '<p>Please select at least one blue-eyed agent.</p>';
+                    }
+                    document.getElementById('history').innerHTML = '';
+                    document.getElementById('epistemic-states').innerHTML = '';
+                });
+            });
+            
+            // update visibility matrix if pyodide loaded
+            if (pyodideLoaded) {
+                updateVisibilityMatrix();
+            }
+        }
+
+        function updateVisibilityMatrix() {
+            const n = parseInt(document.getElementById('n-input').value);
+            const allowSelf = document.getElementById('allow-self-visibility').checked;
+            const matrix = Array(n).fill(null).map(() => Array(n).fill(0));
+            
+            document.querySelectorAll('#matrix-editor input[type="checkbox"]').forEach(cb => {
+                if (cb.checked) {
+                    const row = parseInt(cb.dataset.row);
+                    const col = parseInt(cb.dataset.col);
+                    matrix[row][col] = 1;
+                }
+            });
+            
+            // Convert to Python VisibilityMatrix
+            const matrixStr = JSON.stringify(matrix);
+            const allowSelfPython = allowSelf ? 'True' : 'False';
+            pyodide.runPython(`
+import json
+from model import VisibilityMatrix
+import numpy as np
+
+matrix_data = json.loads('${matrixStr}')
+matrix = np.array(matrix_data, dtype=int)
+current_visibility = VisibilityMatrix(${n}, matrix, allow_self_visibility=${allowSelfPython})
+            `);
+            
+            currentVisibility = pyodide.runPython('current_visibility');
+            simulator = null;
+        }
+
+        function updateBlueAgentsSelect(containerId, n) {
+            const container = document.getElementById(containerId);
+            if (!container) {
+                console.error('Container not found:', containerId);
+                return;
+            }
+            
+            console.log('Updating blue agents select for container:', containerId, 'n:', n);
+            
+            // Preserve current selections if possible
+            const currentSelected = new Set();
+            if (container.querySelectorAll) {
+                container.querySelectorAll('input:checked').forEach(cb => {
+                    const val = parseInt(cb.value);
+                    if (!isNaN(val) && val < n) currentSelected.add(val);
+                });
+            }
+            
+            let html = '';
+            for (let i = 0; i < n; i++) {
+                const checked = currentSelected.has(i) || (currentSelected.size === 0 && i === 0) ? 'checked' : '';
+                html += `<label style="cursor: pointer; display: inline-block; margin-right: 15px; margin-bottom: 10px; padding: 5px; user-select: none;"><input type="checkbox" value="${i}" ${checked} style="margin-right: 5px; cursor: pointer; width: 16px; height: 16px;"> Agent ${i}</label>`;
+            }
+            container.innerHTML = html;
+            console.log('Created', n, 'checkboxes in', containerId);
+            
+            // add event listener to reset simulator when selection changes
+            const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+            checkboxes.forEach(cb => {
+                cb.addEventListener('change', (e) => {
+                    e.stopPropagation();
+                    // reset simulator when blue agents change
+                    simulator = null;
+                    const blueAgents = getBlueAgents(containerId);
+                    if (containerId === 'blue-agents-select') {
+                        // clear state displays - user needs to click Run
+                        if (blueAgents.size === 0) {
+                            document.getElementById('current-state').innerHTML = '<p>Please select at least one blue-eyed agent.</p>';
+                        } else {
+                            document.getElementById('current-state').innerHTML = '<p>Click "Run" to start the simulation.</p>';
+                        }
+                        document.getElementById('history').innerHTML = '';
+                        document.getElementById('epistemic-states').innerHTML = '';
+                    }
+                });
+            });
+        }
+
+        function getBlueAgents(containerId) {
+            const checked = Array.from(document.querySelectorAll(`#${containerId} input:checked`))
+                .map(cb => parseInt(cb.value));
+            return new Set(checked);
+        }
+
+        function getSimulator() {
+            if (!currentVisibility) {
+                updateVisibilityMatrix();
+            }
+            
+            const n = parseInt(document.getElementById('n-input').value);
+            const maxDays = parseInt(document.getElementById('max-days').value);
+            const blueSet = getBlueAgents('blue-agents-select');
+            
+            if (blueSet.size === 0) {
+                alert('Please select at least one blue-eyed agent');
+                return null;
+            }
+            
+            try {
+                if (!simulator) {
+                    const blueList = Array.from(blueSet);
+                    pyodide.runPython(`
+from simulator import SingleMatrixSimulator
+import json
+
+blue_set = set(json.loads('${JSON.stringify(blueList)}'))
+simulator = SingleMatrixSimulator(${n}, current_visibility, blue_set, ${maxDays})
+                    `);
+                    simulator = pyodide.runPython('simulator');
+                }
+                
+                return simulator;
+            } catch (error) {
+                console.error('Error creating simulator:', error);
+                alert('Error creating simulator: ' + error.message);
+                return null;
+            }
+        }
+
+        function handleStep() {
+            const sim = getSimulator();
+            if (!sim) return;
+            
+            pyodide.runPython('result = simulator.step()');
+            const result = pyodide.runPython('result');
+            updateCurrentState();
+        }
+
+        function handleRun() {
+            const sim = getSimulator();
+            if (!sim) return;
+            
+            try {
+                // Show loading state
+                const stateContainer = document.getElementById('current-state');
+                if (stateContainer) {
+                    stateContainer.innerHTML = '<p>Running simulation...</p>';
+                }
+                
+                // Reset simulator first to ensure fresh start
+                pyodide.runPython('simulator.reset()');
+                
+                // Run the simulation
+                pyodide.runPython('result = simulator.run()');
+                
+                // Update the display
+                updateCurrentState();
+            } catch (error) {
+                console.error('Error running simulation:', error);
+                const stateContainer = document.getElementById('current-state');
+                if (stateContainer) {
+                    stateContainer.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+                }
+                alert('Error running simulation: ' + error.message);
+            }
+        }
+
+        function handleReset() {
+            const sim = getSimulator();
+            if (!sim) return;
+            
+            pyodide.runPython('simulator.reset()');
+            simulator = null;
+            updateCurrentState();
+        }
+
+        function updateCurrentState() {
+            const sim = getSimulator();
+            if (!sim) return;
+            
+            pyodide.runPython(`
+import json
+state = simulator.get_current_state()
+state_json = json.dumps({
+    'day': state['day'],
+    'world_set_size': state['world_set_size'],
+    'solved': state['solved'],
+    'stuck': state['stuck'],
+    'history': [
+        {
+            'day': h['day'],
+            'world_set_size': h['world_set_size'],
+            'leavers': h['leavers'],
+            'status': h.get('status', 'continuing'),
+            'epistemic_states': h.get('epistemic_states', {})
+        }
+        for h in state['history']
+    ]
+})
+            `);
+            
+            const stateJson = pyodide.runPython('state_json');
+            const state = JSON.parse(stateJson);
+            
+            // Display current state
+            const stateContainer = document.getElementById('current-state');
+            stateContainer.innerHTML = `
+                <h3>Current State</h3>
+                <div>
+                    <div class="status-metric">
+                        <label>Current Day</label>
+                        <value>${state.day}</value>
+                    </div>
+                    <div class="status-metric">
+                        <label>Possible Worlds</label>
+                        <value>${state.world_set_size}</value>
+                    </div>
+                    <div class="status-metric">
+                        <label>Status</label>
+                        <value>${state.solved ? 'Solved' : state.stuck ? 'Stuck' : 'Running'}</value>
+                    </div>
+                </div>
+            `;
+            
+            // Display history
+            const historyContainer = document.getElementById('history');
+            if (state.history && state.history.length > 0) {
+                let historyHtml = '<h3>Simulation History</h3><table class="history-table" style="border-collapse: collapse; width: 100%; margin: 20px 0;"><thead><tr><th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold;">Day</th><th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold;">Worlds</th><th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold;">Leavers</th><th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold;">Status</th></tr></thead><tbody>';
+                state.history.forEach(day => {
+                    const leavers = day.leavers && day.leavers.length > 0 ? day.leavers.join(', ') : 'None';
+                    historyHtml += `<tr><td style="border: 1px solid #ddd; padding: 8px;">${day.day}</td><td style="border: 1px solid #ddd; padding: 8px;">${day.world_set_size}</td><td style="border: 1px solid #ddd; padding: 8px;">${leavers}</td><td style="border: 1px solid #ddd; padding: 8px;">${day.status || 'continuing'}</td></tr>`;
+                });
+                historyHtml += '</tbody></table>';
+                historyContainer.innerHTML = historyHtml;
+                
+                // Display epistemic states
+                const lastDay = state.history[state.history.length - 1];
+                if (lastDay.epistemic_states && Object.keys(lastDay.epistemic_states).length > 0) {
+                    const epistemicContainer = document.getElementById('epistemic-states');
+                    let epistemicHtml = `<h3>States (Day ${lastDay.day})</h3><table class="epistemic-table" style="border-collapse: collapse; width: 100%; margin: 20px 0;"><thead><tr><th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold;">Agent</th><th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold;">Has Blue Eyes</th><th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold;">State</th></tr></thead><tbody>`;
+                    
+                    pyodide.runPython(`
+import json
+state_obj = simulator.get_current_state()
+last_day = state_obj['history'][-1] if state_obj['history'] else None
+actual_blue = simulator.actual_world
+epistemic_data = []
+if last_day and 'epistemic_states' in last_day:
+    for agent, state_str in last_day['epistemic_states'].items():
+        has_blue = actual_blue.has_blue_eyes(agent)
+        epistemic_data.append({
+            'agent': agent,
+            'has_blue': has_blue,
+            'state': state_str
+        })
+epistemic_json = json.dumps(epistemic_data)
+                    `);
+                    
+                    const epistemicJson = pyodide.runPython('epistemic_json');
+                    const epistemicData = JSON.parse(epistemicJson);
+                    epistemicData.forEach(item => {
+                        const stateStr = item.state.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+                        epistemicHtml += `<tr><td style="border: 1px solid #ddd; padding: 8px;">${item.agent}</td><td style="border: 1px solid #ddd; padding: 8px;">${item.has_blue ? 'Yes' : 'No'}</td><td style="border: 1px solid #ddd; padding: 8px;">${stateStr}</td></tr>`;
+                    });
+                    epistemicHtml += '</tbody></table>';
+                    epistemicContainer.innerHTML = epistemicHtml;
+                } else {
+                    document.getElementById('epistemic-states').innerHTML = '';
+                }
+            } else {
+                historyContainer.innerHTML = '';
+                document.getElementById('epistemic-states').innerHTML = '';
+            }
+            
+            if (state.solved) {
+                stateContainer.innerHTML += `<p><strong>Puzzle solved in ${state.day} days</strong></p>`;
+            } else if (state.stuck) {
+                stateContainer.innerHTML += `<p><strong>Puzzle stuck after ${state.day} days</strong></p>`;
+            }
+        }
+
+        async function handleEnumeration() {
+            const n = parseInt(document.getElementById('mode-b-n').value);
+            const maxDays = parseInt(document.getElementById('mode-b-max-days').value);
+            const definition = document.getElementById('definition').value;
+            const isUniform = definition.includes('Uniform');
+            
+            let blueSet = new Set();
+            if (!isUniform) {
+                blueSet = getBlueAgents('blue-agents-select-b');
+                if (blueSet.size === 0) {
+                    alert('Please select at least one blue-eyed agent for instance solvability');
+                    return;
+                }
+            }
+            
+            const enumMethod = document.getElementById('enum-method')?.value || 'Full Enumeration';
+            const numSamples = enumMethod === 'Random Sampling' ? 
+                parseInt(document.getElementById('num-samples').value) : null;
+            
+            document.getElementById('progress-container').style.display = 'block';
+            document.getElementById('enumeration-results').innerHTML = '';
+            
+            try {
+                const blueList = Array.from(blueSet);
+                const progressCallback = `
+def progress_callback(current, total):
+    from js import document
+    progress = current / total
+    fill = document.getElementById('progress-fill')
+    text = document.getElementById('progress-text')
+    fill.style.width = f'{progress * 100:.1f}%'
+    fill.textContent = f'{progress * 100:.1f}%'
+    text.textContent = f'Checking matrix {current}/{total} ({progress * 100:.1f}%)'
+                `;
+                
+                pyodide.runPython(progressCallback);
+                
+                let code = `
+from enumerator import MatrixEnumerator
+import json
+
+enumerator = MatrixEnumerator(${n}, ${maxDays}, allow_self_visibility=False)
+                `;
+                
+                if (enumMethod === 'Full Enumeration') {
+                    if (isUniform) {
+                        code += `
+result = enumerator.enumerate_uniform(progress_callback)
+                        `;
+                    } else {
+                        code += `
+blue_set = set(json.loads('${JSON.stringify(blueList)}'))
+result = enumerator.enumerate_instance(blue_set, progress_callback)
+                        `;
+                    }
+                } else {
+                    const defType = isUniform ? 'uniform' : 'instance';
+                    code += `
+blue_set = set(json.loads('${JSON.stringify(blueList)}'))
+result = enumerator.sample_random(${numSamples}, blue_set, '${defType}')
+                    `;
+                }
+                
+                await pyodide.runPythonAsync(code);
+                
+                // Convert result to JSON
+                pyodide.runPython(`
+import json
+result_json = json.dumps({
+    'total': result['total'],
+    'solvable': result['solvable'],
+    'unsolvable': result['unsolvable'],
+    'solvable_percentage': result['solvable_percentage'],
+    'example_solvable_matrix': result['example_solvable'].matrix.tolist() if result['example_solvable'] else None,
+    'example_unsolvable_matrix': result['example_unsolvable'].matrix.tolist() if result['example_unsolvable'] else None
+})
+                `);
+                
+                const resultJson = pyodide.runPython('result_json');
+                const result = JSON.parse(resultJson);
+                
+                displayEnumerationResults(result, n);
+            } catch (error) {
+                console.error('Enumeration error:', error);
+                alert('Error during enumeration: ' + error.message);
+            } finally {
+                document.getElementById('progress-container').style.display = 'none';
+            }
+        }
+
+        function displayEnumerationResults(result, n) {
+            const container = document.getElementById('enumeration-results');
+            
+            let html = `
+                <h3>Results</h3>
+                <div>
+                    <div class="status-metric">
+                        <label>Total Matrices</label>
+                        <value>${result.total}</value>
+                    </div>
+                    <div class="status-metric">
+                        <label>Solvable</label>
+                        <value>${result.solvable} (${result.solvable_percentage.toFixed(2)}%)</value>
+                    </div>
+                    <div class="status-metric">
+                        <label>Unsolvable</label>
+                        <value>${result.unsolvable}</value>
+                    </div>
+                </div>
+                <div class="example-matrices" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">
+            `;
+            
+            if (result.example_solvable_matrix) {
+                html += `
+                    <div style="border: 1px solid #ddd; padding: 15px; border-radius: 4px;">
+                        <h4>Example Solvable Matrix</h4>
+                        ${renderMatrixTable(result.example_solvable_matrix, n)}
+                        <button onclick="loadExampleMatrix(${JSON.stringify(result.example_solvable_matrix)}, true)" style="margin-top: 10px; padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Load Solvable Example</button>
+                    </div>
+                `;
+            }
+            
+            if (result.example_unsolvable_matrix) {
+                html += `
+                    <div style="border: 1px solid #ddd; padding: 15px; border-radius: 4px;">
+                        <h4>Example Unsolvable Matrix</h4>
+                        ${renderMatrixTable(result.example_unsolvable_matrix, n)}
+                        <button onclick="loadExampleMatrix(${JSON.stringify(result.example_unsolvable_matrix)}, false)" style="margin-top: 10px; padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Load Unsolvable Example</button>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function renderMatrixTable(matrix, n) {
+            let html = '<table class="matrix-table" style="border-collapse: collapse; width: 100%; margin: 20px 0;"><thead><tr><th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold;"></th>';
+            for (let j = 0; j < n; j++) {
+                html += `<th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold; text-align: center;">Agent ${j}</th>`;
+            }
+            html += '</tr></thead><tbody>';
+            
+            for (let i = 0; i < n; i++) {
+                html += `<tr><th style="border: 1px solid #ddd; padding: 8px; background-color: #f0f0f0; font-weight: bold;">Agent ${i}</th>`;
+                for (let j = 0; j < n; j++) {
+                    html += `<td style="border: 1px solid #ddd; padding: 8px; text-align: center;">${matrix[i][j]}</td>`;
+                }
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+            return html;
+        }
+
+        function loadExampleMatrix(matrix, isSolvable) {
+            // Switch to mode A and load the matrix
+            document.querySelector('input[value="simulator"]').checked = true;
+            document.querySelector('input[value="simulator"]').dispatchEvent(new Event('change'));
+            
+            const n = matrix.length;
+            document.getElementById('n-input').value = n;
+            currentN = n;
+            
+            // Update matrix editor with this matrix
+            setTimeout(() => {
+                const container = document.getElementById('matrix-editor');
+                container.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                    const row = parseInt(cb.dataset.row);
+                    const col = parseInt(cb.dataset.col);
+                    cb.checked = matrix[row][col] === 1;
+                });
+                updateVisibilityMatrix();
+            }, 100);
+        }
+
+        // Make loadExampleMatrix available globally
+        window.loadExampleMatrix = loadExampleMatrix;
+    </script>
+</body>
+</html>

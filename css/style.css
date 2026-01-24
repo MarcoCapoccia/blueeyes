@@ -1,0 +1,169 @@
+/* main layout and typography */
+body {
+    font-family: Arial, sans-serif;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+/* content container with white background */
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+h1 {
+    margin-top: 0;
+}
+
+/* mode selection radio buttons */
+.mode-selector {
+    margin: 20px 0;
+    padding: 10px;
+    background: #f0f0f0;
+    border-radius: 4px;
+}
+
+.mode-selector label {
+    margin-right: 20px;
+    cursor: pointer;
+}
+
+/* input controls layout */
+.controls {
+    display: flex;
+    gap: 20px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+}
+
+.controls > div {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.controls label {
+    font-weight: bold;
+}
+
+.controls input, .controls select {
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* visibility matrix table styling */
+.matrix-table {
+    border-collapse: collapse;
+    margin: 20px 0;
+    width: 100%;
+}
+
+.matrix-table th, .matrix-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+}
+
+.matrix-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.matrix-table td:first-child {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+.matrix-table input[type="checkbox"] {
+    cursor: pointer;
+}
+
+/* action buttons layout */
+.buttons {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.buttons button {
+    padding: 10px 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.buttons button:hover {
+    background: #0056b3;
+}
+
+/* simulation results tables */
+.history-table, .epistemic-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.history-table th, .history-table td,
+.epistemic-table th, .epistemic-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.history-table th, .epistemic-table th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+
+/* result display sections */
+#current-state, #history, #epistemic-states {
+    margin: 20px 0;
+}
+
+/* blue agent selection checkboxes */
+#blue-agents-select, #blue-agents-select-b {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin: 10px 0;
+}
+
+#blue-agents-select label, #blue-agents-select-b label {
+    cursor: pointer;
+}
+
+/* example matrices grid layout */
+.example-matrices {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin: 20px 0;
+}
+
+.example-matrices > div {
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.example-matrices button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.example-matrices button:hover {
+    background: #218838;
+}
